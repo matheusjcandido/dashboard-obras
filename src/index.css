@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito Sans', 'Gotham', system-ui, -apple-system, sans-serif;
+  background-color: #F5F7FA;
+  overflow: hidden;
+  font-weight: 400;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Tipografia Gotham equivalente */
+.gotham-thin { font-weight: 200; }
+.gotham-extra-light { font-weight: 300; }
+.gotham-light { font-weight: 300; }
+.gotham-regular { font-weight: 400; }
+.gotham-medium { font-weight: 500; }
+.gotham-bold { font-weight: 700; }
+.gotham-black { font-weight: 900; }
+
+/* Leaflet CSS corrections */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
