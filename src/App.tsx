@@ -297,6 +297,20 @@ function App() {
   console.log('🚧 Obras em andamento encontradas:', obrasEmAndamento.length);
   console.log('🚧 Exemplos de status:', obrasEmAndamento.slice(0, 5).map(o => o.status));
 
+  // Filtrar obras em contratação
+  const obrasEmContratacao = obras.filter(obra => {
+    const status = obra.status?.toString().trim() || '';
+    const statusLower = status.toLowerCase();
+    return statusLower === 'em contratação' || 
+           statusLower === 'contratação' ||
+           statusLower.includes('contrata') ||
+           statusLower === 'em processo de contratação' ||
+           statusLower === 'processo de contratação';
+  });
+  
+  console.log('🔶 Obras em contratação encontradas:', obrasEmContratacao.length);
+  console.log('🔶 Exemplos de status contratação:', obrasEmContratacao.slice(0, 5).map(o => o.status));
+
   // Filtrar obras em planejamento com SIM na LOA (ignorando ano completamente)
   // Considerando status "Em planejamento" na coluna H e "SIM" na coluna I
   const obrasPlanejamento2026 = obras.filter(obra => {
@@ -391,11 +405,13 @@ function App() {
       return isCompleted && isInValidPeriod;
     }).length,
     obrasAndamento: obrasEmAndamento.length,
+    obrasContratacao: obrasEmContratacao.length,
+    valorObrasContratacao: obrasEmContratacao.reduce((sum, obra) => sum + (obra.valorContratado || obra.valorPrevisto), 0),
     obrasPlanejamento2026: obrasPlanejamento2026.length,
   };
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden relative">
+    <div className="min-h-screen w-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-x-hidden relative">
       {/* Header com cores do Paraná */}
       <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white p-4 shadow-lg" style={{backgroundColor: '#2D4A7D'}}>
         <div className="flex items-center justify-between">
@@ -449,7 +465,7 @@ function App() {
       </div>
       
       {/* Métricas com cores do Paraná */}
-      <div className="p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="p-6 grid grid-cols-1 md:grid-cols-5 gap-6">
         <div className="bg-gradient-to-br from-white to-purple-50 p-6 rounded-xl shadow-lg border-l-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300" style={{borderColor: '#9333EA'}}>
           <div className="flex items-center justify-between">
             <div>
@@ -470,6 +486,23 @@ function App() {
             </div>
             <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center shadow-md">
               <div className="w-6 h-6 rounded-full" style={{backgroundColor: '#5BA5D6'}}></div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-gradient-to-br from-white to-orange-50 p-6 rounded-xl shadow-lg border-l-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300" style={{borderColor: '#EA580C'}}>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm gotham-medium text-gray-600 uppercase tracking-wide">Em Contratação</h3>
+              <p className="text-3xl gotham-bold mt-2" style={{color: '#EA580C'}}>{metrics.obrasContratacao}</p>
+              <p className="text-xs text-gray-500 mt-1 gotham-regular">
+                {metrics.valorObrasContratacao >= 1000000 
+                  ? `R$ ${(metrics.valorObrasContratacao / 1000000).toFixed(1)}M`
+                  : `R$ ${(metrics.valorObrasContratacao / 1000).toFixed(0)} mil`
+                }
+              </p>
+            </div>
+            <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center shadow-md">
+              <div className="w-6 h-6 rounded-full" style={{backgroundColor: '#EA580C'}}></div>
             </div>
           </div>
         </div>
@@ -524,7 +557,7 @@ function App() {
       </div>
 
       {/* Divisor visual */}
-      <div className="px-6 py-4">
+      <div className="px-6 py-3">
         <div className="border-t border-gray-200 relative">
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-orange-200 to-transparent"></div>
         </div>
@@ -616,6 +649,88 @@ function App() {
           <div className="p-4 h-80">
             <MapaParana obras={obras} obrasEmAndamento={obrasEmAndamento} />
           </div>
+        </div>
+      </div>
+
+      {/* Divisor visual */}
+      <div className="px-6 py-2">
+        <div className="border-t border-gray-200 relative">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-orange-200 to-transparent"></div>
+        </div>
+      </div>
+
+      {/* Lista de Obras em Contratação */}
+      <div className="p-6">
+        <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden max-h-96 border border-gray-100">
+          <div className="px-6 py-4 border-b border-gray-200" style={{background: 'linear-gradient(135deg, #EA580C 0%, #FB923C 100%)'}}>
+            <h3 className="text-xl gotham-bold text-white">Obras em Contratação</h3>
+            <p className="text-orange-100 mt-1 gotham-regular">{obrasEmContratacao.length} obras em processo de contratação</p>
+          </div>
+          
+          {obrasEmContratacao.length === 0 ? (
+            <div className="p-8 text-center">
+              <div className="text-gray-400 mb-4">
+                <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h4 className="text-lg gotham-medium text-gray-600 mb-2">
+                Nenhuma obra em contratação
+              </h4>
+              <p className="text-sm text-gray-500 gotham-regular">
+                As obras em processo de contratação aparecerão aqui
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto overflow-y-auto max-h-80">
+              <table className="min-w-full">
+                <thead>
+                  <tr style={{backgroundColor: '#fef3f2'}}>
+                    <th className="px-6 py-4 text-left text-xs gotham-bold uppercase tracking-wider" style={{color: '#EA580C'}}>Protocolo</th>
+                    <th className="px-10 py-4 text-left text-xs gotham-bold uppercase tracking-wider" style={{color: '#EA580C'}}>Objeto</th>
+                    <th className="px-6 py-4 text-left text-xs gotham-bold uppercase tracking-wider" style={{color: '#EA580C'}}>Local</th>
+                    <th className="px-6 py-4 text-left text-xs gotham-bold uppercase tracking-wider" style={{color: '#EA580C'}}>Força</th>
+                    <th className="px-6 py-4 text-left text-xs gotham-bold uppercase tracking-wider" style={{color: '#EA580C'}}>Valor</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {obrasEmContratacao.map((obra, index) => (
+                  <tr key={index} className="hover:bg-orange-50 transition-colors duration-200">
+                    <td className="px-6 py-4 text-sm gotham-bold" style={{color: '#EA580C'}}>{obra.protocolo}</td>
+                    <td className="px-10 py-4 text-sm text-gray-900 gotham-medium">{obra.objeto}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600 gotham-regular">{obra.local.replace(/, ?(PT-BR|PR-BR|Brasil|Brazil)$/i, '')}</td>
+                    <td className="px-6 py-4 text-sm">
+                      <span className={`inline-flex px-3 py-1 text-xs gotham-bold rounded-full ${
+                        obra.forca === 'CBMPR' ? 'text-white' :
+                        obra.forca === 'PMPR' ? 'text-white' :
+                        obra.forca === 'PCPR' ? 'text-white' :
+                        obra.forca === 'PCP' ? 'text-white' :
+                        obra.forca === 'DEPPEN' ? 'text-white' :
+                        'bg-gray-100 text-gray-800'
+                      }`} style={{
+                        backgroundColor: 
+                          obra.forca === 'CBMPR' ? '#DC2626' :
+                          obra.forca === 'PMPR' ? '#EAB308' :
+                          obra.forca === 'PCPR' ? '#6B7280' :
+                          obra.forca === 'PCP' ? '#2563EB' :
+                          obra.forca === 'DEPPEN' ? '#16A34A' :
+                          '#9CA3AF'
+                      }}>
+                        {obra.forca}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm gotham-bold" style={{color: '#228B22'}}>
+                      {(obra.valorContratado || obra.valorPrevisto) >= 1000000 
+                        ? `R$ ${((obra.valorContratado || obra.valorPrevisto) / 1000000).toFixed(1)}M`
+                        : `R$ ${((obra.valorContratado || obra.valorPrevisto) / 1000).toFixed(0)} mil`
+                      }
+                    </td>
+                  </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>
