@@ -478,17 +478,6 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-white to-blue-50 p-6 rounded-xl shadow-lg border-l-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300" style={{borderColor: '#5BA5D6'}}>
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm gotham-medium text-gray-600 uppercase tracking-wide">Em Andamento</h3>
-              <p className="text-3xl gotham-bold mt-2" style={{color: '#5BA5D6'}}>{metrics.obrasAndamento}</p>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center shadow-md">
-              <div className="w-6 h-6 rounded-full" style={{backgroundColor: '#5BA5D6'}}></div>
-            </div>
-          </div>
-        </div>
         <div className="bg-gradient-to-br from-white to-orange-50 p-6 rounded-xl shadow-lg border-l-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300" style={{borderColor: '#EA580C'}}>
           <div className="flex items-center justify-between">
             <div>
@@ -506,10 +495,21 @@ function App() {
             </div>
           </div>
         </div>
+        <div className="bg-gradient-to-br from-white to-blue-50 p-6 rounded-xl shadow-lg border-l-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300" style={{borderColor: '#5BA5D6'}}>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm gotham-medium text-gray-600 uppercase tracking-wide">Em Andamento</h3>
+              <p className="text-3xl gotham-bold mt-2" style={{color: '#5BA5D6'}}>{metrics.obrasAndamento}</p>
+            </div>
+            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center shadow-md">
+              <div className="w-6 h-6 rounded-full" style={{backgroundColor: '#5BA5D6'}}></div>
+            </div>
+          </div>
+        </div>
         <div className="bg-gradient-to-br from-white to-green-50 p-6 rounded-xl shadow-lg border-l-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300" style={{borderColor: '#228B22'}}>
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm gotham-medium text-gray-600 uppercase tracking-wide">Valor Obras em Andamento</h3>
+              <h3 className="text-sm gotham-medium text-gray-600 uppercase tracking-wide">Valor em Andamento</h3>
               <p className="text-3xl gotham-bold mt-2" style={{color: '#228B22'}}>
                 {metrics.valorObrasAndamento >= 1000000 
                   ? `R$ ${(metrics.valorObrasAndamento / 1000000).toFixed(1)}M`
