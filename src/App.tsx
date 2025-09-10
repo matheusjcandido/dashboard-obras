@@ -15,6 +15,7 @@ interface Obra {
   previsaoAno: number;
   valorPrevisto: number;
   valorContratado: number;
+  valorTotalAtual: number;
   andamento: number;
   forca?: string;
   loaStatus?: string;
@@ -81,6 +82,7 @@ const loadDataFromAppsScript = async (): Promise<Obra[]> => {
       previsaoAno: parseInt(item.previsaoano || item.ano || item.Ano) || 2024,
       valorPrevisto: parseFloat(String(item.valorprevisto || item.orcamento || item.ValorPrevisto || '0').replace(/[^\d.,]/g, '')) || 0,
       valorContratado: parseFloat(String(item.valorcontratado || item.valor || item.ValorContratado || '0').replace(/[^\d.,]/g, '')) || 0,
+      valorTotalAtual: parseFloat(String(item.valortotalatual || item['VALOR TOTAL ATUAL'] || '0').replace(/[^\d.,]/g, '')) || 0,
       andamento: parseFloat(item.andamento || item.progresso || item.Andamento) || 0,
       forca: item.forca || item.Forca || 'Não identificado'
     }));
@@ -202,6 +204,8 @@ const loadDataFromAppsScript = async (): Promise<Obra[]> => {
       previsaoAno: anoExecucao,
       valorPrevisto: parseFloat(String(item['VALOR PREVISTO'] || item.valorprevisto || '0').replace(/[^\d.,]/g, '')) || 0,
       valorContratado: parseFloat(String(item['VALOR CONTRATADO'] || item.valorcontratado || '0').replace(/[^\d.,]/g, '')) || 0,
+      // Coluna S é o 19º índice (começando de 0: A=0, B=1... S=18)
+      valorTotalAtual: parseFloat(String(item['VALOR TOTAL ATUAL'] || allKeys[18] ? item[allKeys[18]] : '0').replace(/[^\d.,]/g, '')) || 0,
       andamento: 0, // removido o campo de andamento
       forca: item['FORÇA'] || item.FORCA || item.forca || 'Não identificado',
       // Capturar diretamente a coluna I (LOA 2026)
@@ -393,7 +397,7 @@ function App() {
 
   const metrics = {
     totalObras: obras.length,
-    valorObrasAndamento: obrasEmAndamento.reduce((sum, obra) => sum + (obra.valorContratado || obra.valorPrevisto), 0),
+    valorObrasAndamento: obrasEmAndamento.reduce((sum, obra) => sum + obra.valorTotalAtual, 0),
     obrasConcluidas: obras.filter(obra => {
       const status = obra.status?.toLowerCase() || '';
       const isCompleted = status.includes('concluída') || 
@@ -406,7 +410,7 @@ function App() {
     }).length,
     obrasAndamento: obrasEmAndamento.length,
     obrasContratacao: obrasEmContratacao.length,
-    valorObrasContratacao: obrasEmContratacao.reduce((sum, obra) => sum + (obra.valorContratado || obra.valorPrevisto), 0),
+    valorObrasContratacao: obrasEmContratacao.reduce((sum, obra) => sum + obra.valorTotalAtual, 0),
     obrasPlanejamento2026: obrasPlanejamento2026.length,
   };
 
@@ -627,9 +631,9 @@ function App() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm gotham-bold" style={{color: '#228B22'}}>
-                      {(obra.valorContratado || obra.valorPrevisto) >= 1000000 
-                        ? `R$ ${((obra.valorContratado || obra.valorPrevisto) / 1000000).toFixed(1)}M`
-                        : `R$ ${((obra.valorContratado || obra.valorPrevisto) / 1000).toFixed(0)} mil`
+                      {obra.valorTotalAtual >= 1000000 
+                        ? `R$ ${(obra.valorTotalAtual / 1000000).toFixed(1)}M`
+                        : `R$ ${(obra.valorTotalAtual / 1000).toFixed(0)} mil`
                       }
                     </td>
                   </tr>

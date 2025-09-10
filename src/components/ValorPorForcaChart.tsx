@@ -29,6 +29,7 @@ interface Obra {
   previsaoAno: number;
   valorPrevisto: number;
   valorContratado: number;
+  valorTotalAtual: number;
   andamento: number;
   forca?: string;
 }
@@ -53,7 +54,7 @@ export const ValorPorForcaChart: React.FC<ValorPorForcaChartProps> = ({ obras })
 
   const valorPorForca = obrasEmAndamento.reduce((acc, obra) => {
     const forca = obra.forca || 'Não identificado';
-    const valor = obra.valorContratado || obra.valorPrevisto;
+    const valor = obra.valorTotalAtual;
     acc[forca] = (acc[forca] || 0) + valor;
     return acc;
   }, {} as Record<string, number>);
